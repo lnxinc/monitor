@@ -5,6 +5,7 @@ use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\MonitorController;
+use App\Http\Controllers\UnifiSiteManagerController;
 use App\Http\Controllers\OrganizationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,6 +22,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('device-types', DeviceTypeController::class)->except(['show']);
     Route::resource('monitors', MonitorController::class);
     Route::post('monitors/{monitor}/run', [MonitorController::class, 'run'])->name('monitors.run');
+
+    // UniFi Site Manager integration
+    Route::get('integrations/unifi', [UnifiSiteManagerController::class, 'index'])->name('integrations.unifi.index');
+    Route::post('integrations/unifi/sync', [UnifiSiteManagerController::class, 'sync'])->name('integrations.unifi.sync');
 
     Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
     Route::post('incidents', [IncidentController::class, 'store'])->name('incidents.store');

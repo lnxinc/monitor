@@ -19,6 +19,8 @@ class Device extends Model
         'secret',
         'status',
         'last_seen_at',
+        'external_source',
+        'external_id',
     ];
 
     protected function casts(): array

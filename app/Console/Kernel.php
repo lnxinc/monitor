@@ -11,6 +11,8 @@ class Kernel extends ConsoleKernel
     {
         // Run due monitors every minute
         $schedule->command('monitors:run')->everyMinute()->withoutOverlapping();
+        // Sync UniFi sites periodically
+        $schedule->command('unifi:sync-sites')->everyFiveMinutes()->withoutOverlapping();
     }
 
     protected function commands(): void
