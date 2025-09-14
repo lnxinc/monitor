@@ -17,6 +17,8 @@ interface Props {
         device_type_id?: number | null;
         status: 'online' | 'offline' | 'warning' | 'critical';
         last_seen_at: string | null;
+        external_source?: string | null;
+        unifi_console_id?: string | null;
         created_at: string;
         updated_at: string;
         organization: {
@@ -116,6 +118,30 @@ const formatDateTime = (dateString: string | null) => {
     return new Date(dateString).toLocaleString();
 };
 
+const formatRelativeTime = (dateString: string | null) => {
+    if (!dateString) return 'Never';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '—';
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+    const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+    const divisions: Array<[number, Intl.RelativeTimeFormatUnit]> = [
+        [60, 'second'],
+        [60, 'minute'],
+        [24, 'hour'],
+        [7, 'day'],
+        [4.34524, 'week'],
+        [12, 'month'],
+        [Number.POSITIVE_INFINITY, 'year'],
+    ];
+    let duration = seconds;
+    let unit: Intl.RelativeTimeFormatUnit = 'second';
+    for (const [amount, nextUnit] of divisions) {
+        if (Math.abs(duration) < amount) { unit = nextUnit; break; }
+        duration = Math.round(duration / amount);
+    }
+    return rtf.format(-duration, unit);
+};
+
 const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
 };
@@ -138,6 +164,13 @@ const copyWebhook = async (secret: string) => {
     } catch (err) {
         console.error('Failed to copy webhook URL:', err);
     }
+};
+
+const unifiUrl = (device: any) => {
+    if (device?.external_source === 'unifi_site_manager' && device?.unifi_console_id) {
+        return `https://unifi.ui.com/consoles/${device.unifi_console_id}/network/default`;
+    }
+    return null;
 };
 
 const payload = reactive({
@@ -183,7 +216,7 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                             {{ props.device.organization.name }} • {{ props.device.ip_address }}
                         </p>
                         <p class="text-sm text-muted-foreground">
-                            Last seen: {{ formatDateTime(props.device.last_seen_at) }}
+                            Last seen: {{ formatRelativeTime(props.device.last_seen_at) }}
                         </p>
                     </div>
                 </div>
@@ -191,6 +224,12 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                     <Badge :variant="getStatusBadgeVariant(device.status)" class="capitalize">
                         {{ device.status }}
                     </Badge>
+                    <a v-if="unifiUrl(device)" :href="unifiUrl(device)" target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline">
+                            <LinkIcon class="h-4 w-4 mr-2" />
+                            Open UniFi
+                        </Button>
+                    </a>
                     <Link :href="`/devices/${props.device.id}/edit`">
                         <Button variant="outline">
                             <Edit class="h-4 w-4 mr-2" />

@@ -5,7 +5,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Server, Edit, Eye, Plus, Trash2, CheckCircle, XCircle, AlertTriangle, Copy, Link as LinkIcon } from 'lucide-vue-next';
+import { Server, Edit, Eye, Plus, Trash2, CheckCircle, XCircle, AlertTriangle, Link as LinkIcon } from 'lucide-vue-next';
 
 interface Props {
     devices: Array<{
@@ -15,6 +15,8 @@ interface Props {
         secret: string;
         status: 'online' | 'offline' | 'warning' | 'critical';
         last_seen_at: string | null;
+        external_source?: string | null;
+        unifi_console_id?: string | null;
         created_at: string;
         updated_at: string;
         organization: {
@@ -90,31 +92,45 @@ const getStatusBadgeVariant = (status: string) => {
 
 const formatDateTime = (dateString: string | null) => {
     if (!dateString) return 'Never';
-    return new Date(dateString).toLocaleString();
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '—';
+
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+    const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+
+    const divisions: Array<[number, Intl.RelativeTimeFormatUnit]> = [
+        [60, 'second'],          // up to 60 seconds -> seconds ago
+        [60, 'minute'],          // up to 60 minutes -> minutes ago
+        [24, 'hour'],            // up to 24 hours -> hours ago
+        [7, 'day'],              // up to 7 days -> days ago
+        [4.34524, 'week'],       // approx weeks in a month
+        [12, 'month'],           // months in a year
+        [Number.POSITIVE_INFINITY, 'year'],
+    ];
+
+    let duration = seconds;
+    let unit: Intl.RelativeTimeFormatUnit = 'second';
+    for (const [amount, nextUnit] of divisions) {
+        if (Math.abs(duration) < amount) {
+            unit = nextUnit;
+            break;
+        }
+        duration = Math.round(duration / amount);
+    }
+    return rtf.format(-duration, unit);
 };
 
 const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
 };
 
-const copySecret = async (secret: string) => {
-    try {
-        await navigator.clipboard.writeText(secret);
-        // You could add a toast notification here
-        console.log('Secret copied to clipboard');
-    } catch (err) {
-        console.error('Failed to copy secret:', err);
-    }
-};
+// Removed secret/webhook helpers from overview page; available on device detail page
 
-const webhookUrl = (secret: string) => `${window.location.origin}/api/devices/${secret}/incidents`;
-const copyWebhook = async (secret: string) => {
-    try {
-        await navigator.clipboard.writeText(webhookUrl(secret));
-        console.log('Webhook URL copied');
-    } catch (err) {
-        console.error('Failed to copy webhook URL:', err);
+const unifiUrl = (device: any) => {
+    if (device?.external_source === 'unifi_site_manager' && device?.unifi_console_id) {
+        return `https://unifi.ui.com/consoles/${device.unifi_console_id}/network/default`;
     }
+    return null;
 };
 </script>
 
@@ -181,40 +197,7 @@ const copyWebhook = async (secret: string) => {
                                 <div>Created: {{ formatDate(device.created_at) }}</div>
                             </div>
 
-                            <div class="space-y-2">
-                                <div class="text-xs text-muted-foreground">Device Secret:</div>
-                                <div class="flex items-center space-x-2">
-                                    <code class="flex-1 text-xs bg-muted p-2 rounded font-mono truncate">
-                                        {{ device.secret }}
-                                    </code>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        @click="copySecret(device.secret)"
-                                        class="p-1"
-                                    >
-                                        <Copy class="h-3 w-3" />
-                                    </Button>
-                                </div>
-                            </div>
-
-                            <div class="space-y-2">
-                                <div class="text-xs text-muted-foreground">Webhook URL:</div>
-                                <div class="flex items-center space-x-2">
-                                    <code class="flex-1 text-xs bg-muted p-2 rounded font-mono truncate">
-                                        {{ webhookUrl(device.secret) }}
-                                    </code>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        @click="copyWebhook(device.secret)"
-                                        class="p-1"
-                                        title="Copy Webhook URL"
-                                    >
-                                        <LinkIcon class="h-3 w-3" />
-                                    </Button>
-                                </div>
-                            </div>
+                            <!-- Secret and Webhook removed from overview; see device detail page -->
 
                             <div class="flex items-center justify-between space-x-2 pt-2">
                                 <div class="flex space-x-2">
@@ -228,6 +211,11 @@ const copyWebhook = async (secret: string) => {
                                             <Edit class="h-4 w-4" />
                                         </Button>
                                     </Link>
+                                    <a v-if="unifiUrl(device)" :href="unifiUrl(device)" target="_blank" rel="noopener noreferrer">
+                                        <Button variant="outline" size="sm" title="Open UniFi Network">
+                                            <LinkIcon class="h-4 w-4" />
+                                        </Button>
+                                    </a>
                                 </div>
                                 <Button
                                     variant="outline"

@@ -83,6 +83,30 @@ const formatDateTime = (dateString: string | null) => {
     return new Date(dateString).toLocaleString();
 };
 
+const formatRelativeTime = (dateString: string | null) => {
+    if (!dateString) return 'Never';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '—';
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+    const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+    const divisions: Array<[number, Intl.RelativeTimeFormatUnit]> = [
+        [60, 'second'],
+        [60, 'minute'],
+        [24, 'hour'],
+        [7, 'day'],
+        [4.34524, 'week'],
+        [12, 'month'],
+        [Number.POSITIVE_INFINITY, 'year'],
+    ];
+    let duration = seconds;
+    let unit: Intl.RelativeTimeFormatUnit = 'second';
+    for (const [amount, nextUnit] of divisions) {
+        if (Math.abs(duration) < amount) { unit = nextUnit; break; }
+        duration = Math.round(duration / amount);
+    }
+    return rtf.format(-duration, unit);
+};
+
 const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
 };
@@ -221,7 +245,7 @@ const openIncidents = props.organization.devices.flatMap(d =>
                                     <h3 class="font-medium">{{ device.name }}</h3>
                                     <p class="text-sm text-muted-foreground">{{ device.ip_address }}</p>
                                     <p class="text-xs text-muted-foreground">
-                                        Last seen: {{ formatDateTime(device.last_seen_at) }}
+                                        Last seen: {{ formatRelativeTime(device.last_seen_at) }}
                                     </p>
                                 </div>
                             </div>

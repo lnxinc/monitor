@@ -11,7 +11,16 @@ class OrganizationController extends Controller
 {
     public function index()
     {
-        $organizations = Organization::withCount('devices')->get();
+        $organizations = Organization::query()
+            ->withCount('devices')
+            ->withCount([
+                'devices as online_count' => function ($q) { $q->where('status', 'online'); },
+                'devices as offline_count' => function ($q) { $q->where('status', 'offline'); },
+                'devices as warning_count' => function ($q) { $q->where('status', 'warning'); },
+                'devices as critical_count' => function ($q) { $q->where('status', 'critical'); },
+            ])
+            ->orderBy('name')
+            ->get();
 
         return Inertia::render('Organizations/Index', [
             'organizations' => $organizations,

@@ -13,6 +13,10 @@ interface Props {
         name: string;
         description: string | null;
         devices_count: number;
+        online_count: number;
+        offline_count: number;
+        warning_count: number;
+        critical_count: number;
         created_at: string;
         updated_at: string;
     }>;
@@ -94,8 +98,22 @@ const formatDate = (dateString: string) => {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div class="text-sm text-muted-foreground mb-4">
+                        <div class="text-sm text-muted-foreground mb-3">
                             Created {{ formatDate(organization.created_at) }}
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <Badge variant="secondary" class="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                Online: {{ organization.online_count }}
+                            </Badge>
+                            <Badge variant="secondary" class="bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300">
+                                Offline: {{ organization.offline_count }}
+                            </Badge>
+                            <Badge variant="secondary" class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                                Warning: {{ organization.warning_count }}
+                            </Badge>
+                            <Badge variant="secondary" class="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                                Critical: {{ organization.critical_count }}
+                            </Badge>
                         </div>
                         <div class="flex items-center justify-between space-x-2">
                             <div class="flex space-x-2">

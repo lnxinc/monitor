@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
@@ -91,11 +92,16 @@ class UnifiSiteManager
                 ->where('external_id', $site['external_id'])
                 ->first();
 
-            // Prefer UniFi's last connection change timestamp if available
-            $lastSeenAt = now();
-            $lastConnIso = $site['raw']['lastConnectionStateChange'] ?? null;
-            if (is_string($lastConnIso)) {
-                try { $lastSeenAt = \Carbon\Carbon::parse($lastConnIso); } catch (\Throwable $e) {}
+            // Derive last seen from UniFi payload; if online, prefer current sync time.
+            $parsedLastSeen = $this->extractLastSeenAt($site['raw']);
+            $lastSeenAt = null;
+            if ($site['is_online']) {
+                $lastSeenAt = now();
+            } elseif ($parsedLastSeen instanceof Carbon) {
+                $lastSeenAt = $parsedLastSeen;
+            } elseif ($device && $device->last_seen_at) {
+                // Preserve prior value when offline and no new info
+                $lastSeenAt = $device->last_seen_at;
             }
 
             $payload = [
@@ -107,14 +113,17 @@ class UnifiSiteManager
                 'last_seen_at' => $lastSeenAt,
                 'external_source' => 'unifi_site_manager',
                 'external_id' => $site['external_id'],
+                'unifi_console_id' => $site['raw']['id'] ?? null,
             ];
 
             if ($device) {
                 $changes = [];
-                foreach (['organization_id','device_type_id','name','ip_address','status'] as $k) {
+                foreach (['organization_id','device_type_id','name','ip_address','status','unifi_console_id'] as $k) {
                     if ($device->{$k} !== $payload[$k]) $changes[$k] = $payload[$k];
                 }
-                $changes['last_seen_at'] = $lastSeenAt;
+                if ($lastSeenAt && (! $device->last_seen_at || $device->last_seen_at->ne($lastSeenAt))) {
+                    $changes['last_seen_at'] = $lastSeenAt;
+                }
                 if (! empty($changes)) {
                     $device->update($changes);
                     $updated++;
@@ -244,6 +253,84 @@ class UnifiSiteManager
             'has_internet_issue' => (bool) $hasInternetIssue,
             'raw' => $raw,
         ];
+    }
+
+    /**
+     * Attempt to extract a reliable last-seen timestamp from diverse UniFi payload shapes.
+     * Supports ISO 8601 strings, Unix seconds, and millisecond timestamps.
+     */
+    private function extractLastSeenAt(array $raw): ?Carbon
+    {
+        $candidates = [
+            'lastConnectionStateChange',
+            'reportedState.lastConnectionStateChange',
+            'reportedState.lastSeen',
+            'reportedState.lastSeenAt',
+            'reportedState.lastSeenTime',
+            'reportedState.last_contact',
+            'lastSeen',
+            'last_seen',
+            'lastContact',
+            'last_contact',
+            'updated_at',
+        ];
+
+        foreach ($candidates as $key) {
+            $val = Arr::get($raw, $key);
+            $parsed = $this->parseTimestamp($val);
+            if ($parsed instanceof Carbon) {
+                return $parsed;
+            }
+        }
+
+        // Inspect controllers array for any last-* timestamp
+        $controllers = Arr::get($raw, 'reportedState.controllers', []);
+        if (is_array($controllers)) {
+            foreach ($controllers as $ctrl) {
+                if (!is_array($ctrl)) continue;
+                foreach (['lastConnectionStateChange', 'lastSeen', 'lastSeenAt'] as $k) {
+                    $parsed = $this->parseTimestamp($ctrl[$k] ?? null);
+                    if ($parsed instanceof Carbon) return $parsed;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Parse a mixed timestamp value into Carbon.
+     * - Integers/floats: treat as epoch seconds; values > 1e12 are considered ms.
+     * - Numeric strings: parsed similarly.
+     * - Non-numeric strings: attempt ISO 8601 parse.
+     */
+    private function parseTimestamp(mixed $value): ?Carbon
+    {
+        if ($value === null) return null;
+
+        // Numeric (int/float or numeric string)
+        if (is_int($value) || is_float($value) || (is_string($value) && is_numeric($value))) {
+            $num = (float) $value;
+            // If looks like milliseconds
+            if ($num > 1000000000000) { // 1e12
+                $num = $num / 1000.0;
+            }
+            try {
+                return Carbon::createFromTimestampUTC((int) round($num));
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+
+        if (is_string($value)) {
+            try {
+                return Carbon::parse($value);
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+
+        return null;
     }
 
     private function pickHostname(array $raw): ?string

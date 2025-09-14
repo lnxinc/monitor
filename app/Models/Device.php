@@ -21,6 +21,7 @@ class Device extends Model
         'last_seen_at',
         'external_source',
         'external_id',
+        'unifi_console_id',
     ];
 
     protected function casts(): array
