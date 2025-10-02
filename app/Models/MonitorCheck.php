@@ -16,6 +16,8 @@ class MonitorCheck extends Model
         'status_code',
         'response_time_ms',
         'error',
+        'meta',
+        'payload',
         'checked_at',
     ];
 
@@ -23,6 +25,8 @@ class MonitorCheck extends Model
     {
         return [
             'checked_at' => 'datetime',
+            'meta' => 'array',
+            'payload' => 'array',
         ];
     }
 
@@ -31,4 +35,3 @@ class MonitorCheck extends Model
         return $this->belongsTo(Monitor::class);
     }
 }
-

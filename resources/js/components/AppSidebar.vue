@@ -6,7 +6,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Building2, Server, Activity, Cloud } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, Building2, Server, Activity, Cloud, Bell, Wrench } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -39,6 +39,21 @@ const mainNavItems: NavItem[] = [
         title: 'Monitors',
         href: '/monitors',
         icon: Activity,
+    },
+    {
+        title: 'Alert Channels',
+        href: '/channels',
+        icon: Bell,
+    },
+    {
+        title: 'Policies',
+        href: '/policies',
+        icon: Bell,
+    },
+    {
+        title: 'Maintenance',
+        href: '/maintenance',
+        icon: Wrench,
     },
     {
         title: 'UniFi Sites',

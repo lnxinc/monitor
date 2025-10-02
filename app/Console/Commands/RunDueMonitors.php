@@ -14,7 +14,9 @@ class RunDueMonitors extends Command
     public function handle(): int
     {
         $now = now();
-        $monitors = Monitor::all();
+        $monitors = Monitor::query()
+            ->where('type', '!=', 'webhook')
+            ->get();
         $due = $monitors->filter(function ($m) use ($now) {
             if (empty($m->frequency_minutes) || $m->frequency_minutes < 1) return false;
             if (is_null($m->last_checked_at)) return true;
