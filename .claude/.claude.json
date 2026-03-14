@@ -1,0 +1,25 @@
+{
+  "installMethod": "unknown",
+  "autoUpdates": true,
+  "cachedStatsigGates": {
+    "tengu_disable_bypass_permissions_mode": false,
+    "tengu_use_file_checkpoints": false
+  },
+  "firstStartTime": "2025-10-04T15:44:01.640Z",
+  "userID": "72c97097b2d0f06817f016018d7ad315fcfe7db51bb5209c89082f85c038b453",
+  "projects": {
+    "/Users/sariyono/projects/monitor": {
+      "allowedTools": [],
+      "history": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
+    }
+  },
+  "sonnet45MigrationComplete": true
+}

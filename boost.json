@@ -1,0 +1,23 @@
+{
+    "agents": [
+        "claude_code",
+        "codex",
+        "cursor",
+        "gemini",
+        "opencode",
+        "phpstorm"
+    ],
+    "editors": [
+        "claude_code",
+        "codex",
+        "cursor",
+        "gemini",
+        "opencode",
+        "phpstorm",
+        "vscode"
+    ],
+    "guidelines": [
+        "inertiajs/inertia-laravel",
+        "laravel/fortify"
+    ]
+}
