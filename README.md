@@ -1,21 +1,18 @@
-# MSP Monitor
+# LNX-360
 
-MSP Monitor is a Laravel + Vue application built for managed service providers to track
-infrastructure health across data warehouses, Spectrum servers, customer websites, SSL
-certificates, and third-party telemetry delivered via webhooks. Checks run on a schedule
-through dedicated drivers (HTTP, ICMP ping, TCP port, SSL certificate) with alert routing,
-maintenance windows, and public status pages baked in.
+LNX-360 is a network operations and monitoring platform built with Laravel + Vue for managed service providers to track infrastructure health across devices, servers, websites, SSL certificates, and third-party telemetry delivered via webhooks. Checks run on a schedule through dedicated drivers (HTTP, ICMP ping, TCP port, SSL certificate, SIP) with alert routing, maintenance windows, and public status pages baked in.
 
 ## Key Capabilities
-- Multi-protocol monitoring with driver architecture (HTTP, ping, TCP, SSL, webhook ingest)
-- Per-monitor policies and notification channels (email, Slack webhooks)
+- Multi-protocol monitoring with driver architecture (HTTP, ping, TCP, SSL, SIP, webhook ingest)
+- Per-monitor policies and notification channels (email, Slack webhooks, generic webhooks)
+- Queued notification delivery with automatic retries
 - Maintenance windows to suppress noise during planned work
 - UniFi Site Manager integration for automated device sync
 - Public-facing status page support via Inertia/SPA frontend
 - Queue-driven execution and centralized incident tracking
 
 ## Requirements
-- PHP **8.2** or newer with required extensions (`bcmath`, `ctype`, `openssl`, `pdo`, `mbstring`, `curl`)
+- PHP **8.4** or newer with required extensions (`bcmath`, `ctype`, `openssl`, `pdo`, `mbstring`, `curl`)
 - Composer **2.x**
 - Node.js **18+** and npm (or pnpm/yarn) for frontend assets
 - Redis, SQS, or database queue driver (database queue enabled out of the box)
@@ -29,7 +26,7 @@ Optional:
 ## First-Time Setup
 1. **Clone & Install Dependencies**
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/lnxinc/monitor.git
    cd monitor
    composer install --no-interaction --prefer-dist
    npm install
@@ -66,7 +63,7 @@ Optional:
 - Execute the scheduler locally with: `php artisan schedule:work`
 
 ## Deployment Guide
-1. **Install PHP Dependencies** on the target host (as in setup) using `composer install --no-dev --optimize-autoloader`.
+1. **Install PHP Dependencies** on the target host using `composer install --no-dev --optimize-autoloader`.
 2. **Install Frontend Assets** via `npm ci && npm run build` from the release directory.
 3. **Set Environment** variables and ensure `.env` has production credentials.
 4. **Run Database Migrations** during each deploy: `php artisan migrate --force`.
@@ -111,3 +108,9 @@ CI/CD pipelines should execute the test suite and a linter/formatter (e.g., `ven
 - For SSL/TLS probing support ensure the host running checks can establish outbound connections
   (ICMP, TCP, HTTP/HTTPS as needed).
 - When using the ping driver on Linux, grant the PHP process permission to run `ping` (setcap or wrapper).
+
+## License
+
+LNX-360 is released under the [LNX-360 Source Available License](LICENSE).
+
+You are free to use, modify, and deploy this software as long as you keep attribution to LNX Inc. **Reselling or commercially redistributing** the software as a product or SaaS offering requires prior written permission. Contact **sari@lnxinc.com** for commercial redistribution licensing.

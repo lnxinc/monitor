@@ -15,4 +15,5 @@ Route::post('/webhooks/monitors/{token}', [MonitorWebhookController::class, 'ing
     ->name('api.monitors.webhooks.ingest');
 
 Route::apiResource('monitors', ApiMonitorController::class)
-    ->middleware('auth');
+    ->middleware('auth')
+    ->names('api.monitors');
