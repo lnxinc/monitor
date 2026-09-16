@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, CheckCircle, Activity, Clock, ArrowLeft } from 'lucide-vue-next';
+import { Activity, AlertTriangle, ArrowLeft, CheckCircle, Clock } from 'lucide-vue-next';
 
 interface Props {
     incident: {
@@ -70,8 +70,8 @@ const formatDateTime = (dateString: string) => new Date(dateString).toLocaleStri
         <div class="flex h-full flex-1 flex-col gap-6 p-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <Link href="/incidents" class="text-muted-foreground hover:text-foreground inline-flex items-center">
-                        <ArrowLeft class="h-4 w-4 mr-1" /> Back
+                    <Link href="/incidents" class="inline-flex items-center text-muted-foreground hover:text-foreground">
+                        <ArrowLeft class="mr-1 h-4 w-4" /> Back
                     </Link>
                     <h1 class="text-3xl font-bold tracking-tight">{{ props.incident.title }}</h1>
                 </div>
@@ -97,8 +97,12 @@ const formatDateTime = (dateString: string) => new Date(dateString).toLocaleStri
                         <div><span class="font-medium">Organization:</span> {{ props.incident.device.organization.name }}</div>
                         <div><span class="font-medium">Device:</span> {{ props.incident.device.name }}</div>
                         <div><span class="font-medium">Occurred:</span> {{ formatDateTime(props.incident.occurred_at) }}</div>
-                        <div v-if="props.incident.acknowledged_at"><span class="font-medium">Acknowledged:</span> {{ formatDateTime(props.incident.acknowledged_at) }}</div>
-                        <div v-if="props.incident.resolved_at"><span class="font-medium">Resolved:</span> {{ formatDateTime(props.incident.resolved_at) }}</div>
+                        <div v-if="props.incident.acknowledged_at">
+                            <span class="font-medium">Acknowledged:</span> {{ formatDateTime(props.incident.acknowledged_at) }}
+                        </div>
+                        <div v-if="props.incident.resolved_at">
+                            <span class="font-medium">Resolved:</span> {{ formatDateTime(props.incident.resolved_at) }}
+                        </div>
                         <div v-if="(props as any).incident.resolution_comment">
                             <span class="font-medium">Resolution Comment:</span>
                             <span class="whitespace-pre-wrap text-foreground">{{ (props as any).incident.resolution_comment }}</span>
@@ -106,13 +110,13 @@ const formatDateTime = (dateString: string) => new Date(dateString).toLocaleStri
                     </div>
 
                     <div v-if="props.incident.description">
-                        <h3 class="font-medium mb-1">Description</h3>
+                        <h3 class="mb-1 font-medium">Description</h3>
                         <p class="text-sm text-foreground">{{ props.incident.description }}</p>
                     </div>
 
                     <div v-if="props.incident.metadata">
-                        <h3 class="font-medium mb-1">Metadata</h3>
-                        <pre class="text-xs bg-muted rounded p-3 overflow-auto">{{ JSON.stringify(props.incident.metadata, null, 2) }}</pre>
+                        <h3 class="mb-1 font-medium">Metadata</h3>
+                        <pre class="overflow-auto rounded bg-muted p-3 text-xs">{{ JSON.stringify(props.incident.metadata, null, 2) }}</pre>
                     </div>
                 </CardContent>
             </Card>

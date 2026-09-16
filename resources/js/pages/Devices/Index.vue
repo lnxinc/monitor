@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Server, Edit, Eye, Plus, Trash2, CheckCircle, XCircle, AlertTriangle, Link as LinkIcon } from 'lucide-vue-next';
+import { AlertTriangle, CheckCircle, Edit, Eye, Link as LinkIcon, Plus, Server, Trash2, XCircle } from 'lucide-vue-next';
 
 interface Props {
     devices: Array<{
@@ -99,12 +99,12 @@ const formatDateTime = (dateString: string | null) => {
     const seconds = Math.round((Date.now() - date.getTime()) / 1000);
 
     const divisions: Array<[number, Intl.RelativeTimeFormatUnit]> = [
-        [60, 'second'],          // up to 60 seconds -> seconds ago
-        [60, 'minute'],          // up to 60 minutes -> minutes ago
-        [24, 'hour'],            // up to 24 hours -> hours ago
-        [7, 'day'],              // up to 7 days -> days ago
-        [4.34524, 'week'],       // approx weeks in a month
-        [12, 'month'],           // months in a year
+        [60, 'second'], // up to 60 seconds -> seconds ago
+        [60, 'minute'], // up to 60 minutes -> minutes ago
+        [24, 'hour'], // up to 24 hours -> hours ago
+        [7, 'day'], // up to 7 days -> days ago
+        [4.34524, 'week'], // approx weeks in a month
+        [12, 'month'], // months in a year
         [Number.POSITIVE_INFINITY, 'year'],
     ];
 
@@ -140,28 +140,24 @@ const unifiUrl = (device: any) => {
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Devices</h1>
-                    <p class="text-muted-foreground">
-                        Monitor and manage all devices
-                    </p>
+                    <p class="text-muted-foreground">Monitor and manage all devices</p>
                 </div>
                 <Link href="/devices/create">
                     <Button>
-                        <Plus class="h-4 w-4 mr-2" />
+                        <Plus class="mr-2 h-4 w-4" />
                         Add Device
                     </Button>
                 </Link>
             </div>
 
-            <div v-if="props.devices.length === 0" class="text-center py-12">
+            <div v-if="props.devices.length === 0" class="py-12 text-center">
                 <Server class="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 class="mt-4 text-lg font-medium">No devices</h3>
-                <p class="mt-2 text-muted-foreground">
-                    Get started by creating your first device.
-                </p>
+                <p class="mt-2 text-muted-foreground">Get started by creating your first device.</p>
                 <div class="mt-6">
                     <Link href="/devices/create">
                         <Button>
-                            <Plus class="h-4 w-4 mr-2" />
+                            <Plus class="mr-2 h-4 w-4" />
                             Add Device
                         </Button>
                     </Link>
@@ -172,11 +168,10 @@ const unifiUrl = (device: any) => {
                 <Card v-for="device in props.devices" :key="device.id">
                     <CardHeader>
                         <div class="flex items-start justify-between">
-                            <div class="flex items-start space-x-3 flex-1">
-                                <component :is="getStatusIcon(device.status)"
-                                          :class="['h-5 w-5 mt-0.5', getStatusColor(device.status)]" />
-                                <div class="flex-1 min-w-0">
-                                    <CardTitle class="text-lg truncate">{{ device.name }}</CardTitle>
+                            <div class="flex flex-1 items-start space-x-3">
+                                <component :is="getStatusIcon(device.status)" :class="['mt-0.5 h-5 w-5', getStatusColor(device.status)]" />
+                                <div class="min-w-0 flex-1">
+                                    <CardTitle class="truncate text-lg">{{ device.name }}</CardTitle>
                                     <CardDescription class="space-y-1">
                                         <div class="font-mono text-sm">{{ device.ip_address }}</div>
                                         <div class="text-xs">{{ device.organization.name }}</div>
@@ -213,12 +208,7 @@ const unifiUrl = (device: any) => {
                                         </Button>
                                     </a>
                                 </div>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    @click="deleteDevice(device.id)"
-                                    class="text-destructive hover:text-destructive"
-                                >
+                                <Button variant="outline" size="sm" @click="deleteDevice(device.id)" class="text-destructive hover:text-destructive">
                                     <Trash2 class="h-4 w-4" />
                                 </Button>
                             </div>

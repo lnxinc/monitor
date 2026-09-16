@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useForm } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 interface Props {
     organizations: Array<{
@@ -54,23 +53,17 @@ const form = useForm({
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Create Device</h1>
-                    <p class="text-muted-foreground">
-                        Add a new device to monitor
-                    </p>
+                    <p class="text-muted-foreground">Add a new device to monitor</p>
                 </div>
                 <Link href="/devices">
-                    <Button variant="outline">
-                        Cancel
-                    </Button>
+                    <Button variant="outline"> Cancel </Button>
                 </Link>
             </div>
 
             <Card class="max-w-2xl">
                 <CardHeader>
                     <CardTitle>Device Details</CardTitle>
-                    <CardDescription>
-                        Enter the details for the new device. A 32-character secret will be automatically generated.
-                    </CardDescription>
+                    <CardDescription> Enter the details for the new device. A 32-character secret will be automatically generated. </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form @submit.prevent="form.post('/devices')">
@@ -81,14 +74,10 @@ const form = useForm({
                                     id="organization_id"
                                     v-model="form.organization_id"
                                     required
-                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <option value="">Select an organization</option>
-                                    <option
-                                        v-for="organization in props.organizations"
-                                        :key="organization.id"
-                                        :value="organization.id.toString()"
-                                    >
+                                    <option v-for="organization in props.organizations" :key="organization.id" :value="organization.id.toString()">
                                         {{ organization.name }}
                                     </option>
                                 </select>
@@ -102,14 +91,10 @@ const form = useForm({
                                 <select
                                     id="device_type_id"
                                     v-model="form.device_type_id"
-                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <option value="">No type</option>
-                                    <option
-                                        v-for="type in props.deviceTypes"
-                                        :key="type.id"
-                                        :value="type.id.toString()"
-                                    >
+                                    <option v-for="type in props.deviceTypes" :key="type.id" :value="type.id.toString()">
                                         {{ type.name }}
                                     </option>
                                 </select>
@@ -117,13 +102,7 @@ const form = useForm({
 
                             <div class="space-y-2">
                                 <Label for="name">Device Name *</Label>
-                                <Input
-                                    id="name"
-                                    v-model="form.name"
-                                    type="text"
-                                    placeholder="Enter device name"
-                                    required
-                                />
+                                <Input id="name" v-model="form.name" type="text" placeholder="Enter device name" required />
                                 <div v-if="form.errors.name" class="text-sm text-destructive">
                                     {{ form.errors.name }}
                                 </div>
@@ -131,13 +110,7 @@ const form = useForm({
 
                             <div class="space-y-2">
                                 <Label for="ip_address">IP Address *</Label>
-                                <Input
-                                    id="ip_address"
-                                    v-model="form.ip_address"
-                                    type="text"
-                                    placeholder="192.168.1.100"
-                                    required
-                                />
+                                <Input id="ip_address" v-model="form.ip_address" type="text" placeholder="192.168.1.100" required />
                                 <div v-if="form.errors.ip_address" class="text-sm text-destructive">
                                     {{ form.errors.ip_address }}
                                 </div>
@@ -148,7 +121,7 @@ const form = useForm({
                                 <select
                                     id="status"
                                     v-model="form.status"
-                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <option value="online">Online</option>
                                     <option value="offline">Offline</option>
@@ -160,19 +133,17 @@ const form = useForm({
                                 </div>
                             </div>
 
-                            <div class="bg-muted p-4 rounded-lg">
-                                <h4 class="font-medium mb-2">Device Secret</h4>
+                            <div class="rounded-lg bg-muted p-4">
+                                <h4 class="mb-2 font-medium">Device Secret</h4>
                                 <p class="text-sm text-muted-foreground">
-                                    A unique 32-character secret will be automatically generated for this device.
-                                    This secret is used for device authentication and monitoring.
+                                    A unique 32-character secret will be automatically generated for this device. This secret is used for device
+                                    authentication and monitoring.
                                 </p>
                             </div>
 
                             <div class="flex items-center justify-end space-x-4">
                                 <Link href="/devices">
-                                    <Button variant="outline" type="button">
-                                        Cancel
-                                    </Button>
+                                    <Button variant="outline" type="button"> Cancel </Button>
                                 </Link>
                                 <Button type="submit" :disabled="form.processing">
                                     {{ form.processing ? 'Creating...' : 'Create Device' }}

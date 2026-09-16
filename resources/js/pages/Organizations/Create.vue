@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useForm } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,36 +36,24 @@ const form = useForm({
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Create Organization</h1>
-                    <p class="text-muted-foreground">
-                        Add a new organization to manage devices
-                    </p>
+                    <p class="text-muted-foreground">Add a new organization to manage devices</p>
                 </div>
                 <Link href="/organizations">
-                    <Button variant="outline">
-                        Cancel
-                    </Button>
+                    <Button variant="outline"> Cancel </Button>
                 </Link>
             </div>
 
             <Card class="max-w-2xl">
                 <CardHeader>
                     <CardTitle>Organization Details</CardTitle>
-                    <CardDescription>
-                        Enter the details for the new organization
-                    </CardDescription>
+                    <CardDescription> Enter the details for the new organization </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form @submit.prevent="form.post('/organizations')">
                         <div class="space-y-6">
                             <div class="space-y-2">
                                 <Label for="name">Name *</Label>
-                                <Input
-                                    id="name"
-                                    v-model="form.name"
-                                    type="text"
-                                    placeholder="Enter organization name"
-                                    required
-                                />
+                                <Input id="name" v-model="form.name" type="text" placeholder="Enter organization name" required />
                                 <div v-if="form.errors.name" class="text-sm text-destructive">
                                     {{ form.errors.name }}
                                 </div>
@@ -79,7 +66,7 @@ const form = useForm({
                                     v-model="form.description"
                                     placeholder="Enter organization description (optional)"
                                     rows="3"
-                                    class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                 />
                                 <div v-if="form.errors.description" class="text-sm text-destructive">
                                     {{ form.errors.description }}
@@ -88,9 +75,7 @@ const form = useForm({
 
                             <div class="flex items-center justify-end space-x-4">
                                 <Link href="/organizations">
-                                    <Button variant="outline" type="button">
-                                        Cancel
-                                    </Button>
+                                    <Button variant="outline" type="button"> Cancel </Button>
                                 </Link>
                                 <Button type="submit" :disabled="form.processing">
                                     {{ form.processing ? 'Creating...' : 'Create Organization' }}

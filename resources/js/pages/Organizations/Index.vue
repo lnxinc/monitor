@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Building2, Edit, Eye, Plus, Trash2 } from 'lucide-vue-next';
 
 interface Props {
@@ -54,28 +54,24 @@ const formatDate = (dateString: string) => {
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Organizations</h1>
-                    <p class="text-muted-foreground">
-                        Manage organizations and their devices
-                    </p>
+                    <p class="text-muted-foreground">Manage organizations and their devices</p>
                 </div>
                 <Link href="/organizations/create">
                     <Button>
-                        <Plus class="h-4 w-4 mr-2" />
+                        <Plus class="mr-2 h-4 w-4" />
                         Add Organization
                     </Button>
                 </Link>
             </div>
 
-            <div v-if="props.organizations.length === 0" class="text-center py-12">
+            <div v-if="props.organizations.length === 0" class="py-12 text-center">
                 <Building2 class="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 class="mt-4 text-lg font-medium">No organizations</h3>
-                <p class="mt-2 text-muted-foreground">
-                    Get started by creating your first organization.
-                </p>
+                <p class="mt-2 text-muted-foreground">Get started by creating your first organization.</p>
                 <div class="mt-6">
                     <Link href="/organizations/create">
                         <Button>
-                            <Plus class="h-4 w-4 mr-2" />
+                            <Plus class="mr-2 h-4 w-4" />
                             Add Organization
                         </Button>
                     </Link>
@@ -98,10 +94,8 @@ const formatDate = (dateString: string) => {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div class="text-sm text-muted-foreground mb-3">
-                            Created {{ formatDate(organization.created_at) }}
-                        </div>
-                        <div class="flex flex-wrap gap-2 mb-4">
+                        <div class="mb-3 text-sm text-muted-foreground">Created {{ formatDate(organization.created_at) }}</div>
+                        <div class="mb-4 flex flex-wrap gap-2">
                             <Badge variant="secondary" class="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
                                 Online: {{ organization.online_count }}
                             </Badge>

@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Building2, Server, Activity, Cloud, Bell, Wrench } from 'lucide-vue-next';
+import { Activity, Bell, Building2, Cloud, LayoutGrid, Server, Wrench } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -60,8 +60,6 @@ const mainNavItems: NavItem[] = [
         icon: Cloud,
     },
 ];
-
-
 </script>
 
 <template>

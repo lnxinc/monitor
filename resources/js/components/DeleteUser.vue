@@ -75,7 +75,9 @@ const passwordInput = ref<InstanceType<typeof Input> | null>(null);
                                 </Button>
                             </DialogClose>
 
-                            <Button type="submit" variant="destructive" :disabled="processing" data-test="confirm-delete-user-button"> Delete account </Button>
+                            <Button type="submit" variant="destructive" :disabled="processing" data-test="confirm-delete-user-button">
+                                Delete account
+                            </Button>
                         </DialogFooter>
                     </Form>
                 </DialogContent>

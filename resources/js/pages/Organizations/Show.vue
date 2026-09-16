@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Edit, Plus, Server, Activity, CheckCircle, XCircle, AlertTriangle } from 'lucide-vue-next';
+import { Activity, AlertTriangle, CheckCircle, Edit, Plus, Server, XCircle } from 'lucide-vue-next';
 
 interface Props {
     organization: {
@@ -78,11 +78,6 @@ const getStatusColor = (status: string) => {
     }
 };
 
-const formatDateTime = (dateString: string | null) => {
-    if (!dateString) return 'Never';
-    return new Date(dateString).toLocaleString();
-};
-
 const formatRelativeTime = (dateString: string | null) => {
     if (!dateString) return 'Never';
     const date = new Date(dateString);
@@ -101,7 +96,10 @@ const formatRelativeTime = (dateString: string | null) => {
     let duration = seconds;
     let unit: Intl.RelativeTimeFormatUnit = 'second';
     for (const [amount, nextUnit] of divisions) {
-        if (Math.abs(duration) < amount) { unit = nextUnit; break; }
+        if (Math.abs(duration) < amount) {
+            unit = nextUnit;
+            break;
+        }
         duration = Math.round(duration / amount);
     }
     return rtf.format(-duration, unit);
@@ -113,15 +111,13 @@ const formatDate = (dateString: string) => {
 
 const deviceStats = {
     total: props.organization.devices.length,
-    online: props.organization.devices.filter(d => d.status === 'online').length,
-    offline: props.organization.devices.filter(d => d.status === 'offline').length,
-    warning: props.organization.devices.filter(d => d.status === 'warning').length,
-    critical: props.organization.devices.filter(d => d.status === 'critical').length,
+    online: props.organization.devices.filter((d) => d.status === 'online').length,
+    offline: props.organization.devices.filter((d) => d.status === 'offline').length,
+    warning: props.organization.devices.filter((d) => d.status === 'warning').length,
+    critical: props.organization.devices.filter((d) => d.status === 'critical').length,
 };
 
-const openIncidents = props.organization.devices.flatMap(d =>
-    d.incidents.filter(i => i.status === 'open')
-).length;
+const openIncidents = props.organization.devices.flatMap((d) => d.incidents.filter((i) => i.status === 'open')).length;
 </script>
 
 <template>
@@ -135,20 +131,18 @@ const openIncidents = props.organization.devices.flatMap(d =>
                     <p v-if="props.organization.description" class="text-muted-foreground">
                         {{ props.organization.description }}
                     </p>
-                    <p class="text-sm text-muted-foreground mt-1">
-                        Created {{ formatDate(props.organization.created_at) }}
-                    </p>
+                    <p class="mt-1 text-sm text-muted-foreground">Created {{ formatDate(props.organization.created_at) }}</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     <Link :href="`/organizations/${props.organization.id}/edit`">
                         <Button variant="outline">
-                            <Edit class="h-4 w-4 mr-2" />
+                            <Edit class="mr-2 h-4 w-4" />
                             Edit
                         </Button>
                     </Link>
                     <Link href="/devices/create">
                         <Button>
-                            <Plus class="h-4 w-4 mr-2" />
+                            <Plus class="mr-2 h-4 w-4" />
                             Add Device
                         </Button>
                     </Link>
@@ -206,29 +200,25 @@ const openIncidents = props.organization.devices.flatMap(d =>
                     <div class="flex items-center justify-between">
                         <div>
                             <CardTitle>Devices</CardTitle>
-                            <CardDescription>
-                                Devices managed by this organization
-                            </CardDescription>
+                            <CardDescription> Devices managed by this organization </CardDescription>
                         </div>
                         <Link href="/devices/create">
                             <Button variant="outline" size="sm">
-                                <Plus class="h-4 w-4 mr-2" />
+                                <Plus class="mr-2 h-4 w-4" />
                                 Add Device
                             </Button>
                         </Link>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div v-if="props.organization.devices.length === 0" class="text-center py-8">
+                    <div v-if="props.organization.devices.length === 0" class="py-8 text-center">
                         <Server class="mx-auto h-12 w-12 text-muted-foreground" />
                         <h3 class="mt-4 text-lg font-medium">No devices</h3>
-                        <p class="mt-2 text-muted-foreground">
-                            Get started by adding your first device.
-                        </p>
+                        <p class="mt-2 text-muted-foreground">Get started by adding your first device.</p>
                         <div class="mt-6">
                             <Link href="/devices/create">
                                 <Button>
-                                    <Plus class="h-4 w-4 mr-2" />
+                                    <Plus class="mr-2 h-4 w-4" />
                                     Add Device
                                 </Button>
                             </Link>
@@ -236,37 +226,34 @@ const openIncidents = props.organization.devices.flatMap(d =>
                     </div>
 
                     <div v-else class="space-y-4">
-                        <div v-for="device in props.organization.devices" :key="device.id"
-                             class="flex items-center justify-between p-4 border rounded-lg">
+                        <div
+                            v-for="device in props.organization.devices"
+                            :key="device.id"
+                            class="flex items-center justify-between rounded-lg border p-4"
+                        >
                             <div class="flex items-center space-x-4">
-                                <component :is="getStatusIcon(device.status)"
-                                          :class="['h-5 w-5', getStatusColor(device.status)]" />
+                                <component :is="getStatusIcon(device.status)" :class="['h-5 w-5', getStatusColor(device.status)]" />
                                 <div>
                                     <h3 class="font-medium">{{ device.name }}</h3>
                                     <p class="text-sm text-muted-foreground">{{ device.ip_address }}</p>
-                                    <p class="text-xs text-muted-foreground">
-                                        Last seen: {{ formatRelativeTime(device.last_seen_at) }}
-                                    </p>
+                                    <p class="text-xs text-muted-foreground">Last seen: {{ formatRelativeTime(device.last_seen_at) }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-4">
                                 <div class="text-right">
                                     <Badge
-                                        :variant="device.status === 'online' ? 'default' :
-                                                device.status === 'offline' ? 'secondary' : 'destructive'"
+                                        :variant="device.status === 'online' ? 'default' : device.status === 'offline' ? 'secondary' : 'destructive'"
                                         class="capitalize"
                                     >
                                         {{ device.status }}
                                     </Badge>
-                                    <div class="text-xs text-muted-foreground mt-1">
-                                        {{ device.incidents.filter(i => i.status === 'open').length }} open incidents
+                                    <div class="mt-1 text-xs text-muted-foreground">
+                                        {{ device.incidents.filter((i) => i.status === 'open').length }} open incidents
                                     </div>
                                 </div>
                                 <div class="flex space-x-2">
                                     <Link :href="`/devices/${device.id}`">
-                                        <Button variant="outline" size="sm">
-                                            View
-                                        </Button>
+                                        <Button variant="outline" size="sm"> View </Button>
                                     </Link>
                                 </div>
                             </div>

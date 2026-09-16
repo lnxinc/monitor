@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Server, Edit, CheckCircle, XCircle, AlertTriangle, Activity, Copy, Eye, Link as LinkIcon } from 'lucide-vue-next';
+import { Activity, AlertTriangle, CheckCircle, Copy, Edit, Eye, Link as LinkIcon, Server, XCircle } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
 
 interface Props {
@@ -136,7 +136,10 @@ const formatRelativeTime = (dateString: string | null) => {
     let duration = seconds;
     let unit: Intl.RelativeTimeFormatUnit = 'second';
     for (const [amount, nextUnit] of divisions) {
-        if (Math.abs(duration) < amount) { unit = nextUnit; break; }
+        if (Math.abs(duration) < amount) {
+            unit = nextUnit;
+            break;
+        }
         duration = Math.round(duration / amount);
     }
     return rtf.format(-duration, unit);
@@ -180,13 +183,19 @@ const payload = reactive({
     device_status: 'warning',
 });
 
-const exampleJson = computed(() => JSON.stringify({
-    severity: payload.severity,
-    title: payload.title,
-    description: payload.description,
-    device_status: payload.device_status,
-    metadata: { source: 'manual' },
-}, null, 2));
+const exampleJson = computed(() =>
+    JSON.stringify(
+        {
+            severity: payload.severity,
+            title: payload.title,
+            description: payload.description,
+            device_status: payload.device_status,
+            metadata: { source: 'manual' },
+        },
+        null,
+        2,
+    ),
+);
 
 const copyExamplePayload = async () => {
     try {
@@ -197,7 +206,7 @@ const copyExamplePayload = async () => {
     }
 };
 
-const openIncidents = props.device.incidents.filter(i => i.status === 'open');
+const openIncidents = props.device.incidents.filter((i) => i.status === 'open');
 const recentIncidents = props.device.incidents.slice(0, 5);
 </script>
 
@@ -208,16 +217,11 @@ const recentIncidents = props.device.incidents.slice(0, 5);
         <div class="flex h-full flex-1 flex-col gap-6 p-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <component :is="getStatusIcon(device.status)"
-                              :class="['h-8 w-8', getStatusColor(device.status)]" />
+                    <component :is="getStatusIcon(device.status)" :class="['h-8 w-8', getStatusColor(device.status)]" />
                     <div>
                         <h1 class="text-3xl font-bold tracking-tight">{{ props.device.name }}</h1>
-                        <p class="text-muted-foreground">
-                            {{ props.device.organization.name }} • {{ props.device.ip_address }}
-                        </p>
-                        <p class="text-sm text-muted-foreground">
-                            Last seen: {{ formatRelativeTime(props.device.last_seen_at) }}
-                        </p>
+                        <p class="text-muted-foreground">{{ props.device.organization.name }} • {{ props.device.ip_address }}</p>
+                        <p class="text-sm text-muted-foreground">Last seen: {{ formatRelativeTime(props.device.last_seen_at) }}</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-2">
@@ -226,13 +230,13 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                     </Badge>
                     <a v-if="unifiUrl(device)" :href="unifiUrl(device)" target="_blank" rel="noopener noreferrer">
                         <Button variant="outline">
-                            <LinkIcon class="h-4 w-4 mr-2" />
+                            <LinkIcon class="mr-2 h-4 w-4" />
                             Open UniFi
                         </Button>
                     </a>
                     <Link :href="`/devices/${props.device.id}/edit`">
                         <Button variant="outline">
-                            <Edit class="h-4 w-4 mr-2" />
+                            <Edit class="mr-2 h-4 w-4" />
                             Edit
                         </Button>
                     </Link>
@@ -244,9 +248,7 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                 <Card>
                     <CardHeader>
                         <CardTitle>Device Information</CardTitle>
-                        <CardDescription>
-                            Basic device details and configuration
-                        </CardDescription>
+                        <CardDescription> Basic device details and configuration </CardDescription>
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div>
@@ -255,7 +257,7 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                         </div>
                         <div>
                             <label class="text-sm font-medium text-muted-foreground">IP Address</label>
-                            <p class="text-sm font-mono">{{ device.ip_address }}</p>
+                            <p class="font-mono text-sm">{{ device.ip_address }}</p>
                         </div>
                         <div>
                             <label class="text-sm font-medium text-muted-foreground">Organization</label>
@@ -273,9 +275,8 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                         </div>
                         <div>
                             <label class="text-sm font-medium text-muted-foreground">Status</label>
-                            <div class="flex items-center space-x-2 mt-1">
-                                <component :is="getStatusIcon(device.status)"
-                                          :class="['h-4 w-4', getStatusColor(device.status)]" />
+                            <div class="mt-1 flex items-center space-x-2">
+                                <component :is="getStatusIcon(device.status)" :class="['h-4 w-4', getStatusColor(device.status)]" />
                                 <span class="text-sm capitalize">{{ device.status }}</span>
                             </div>
                         </div>
@@ -289,38 +290,26 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                 <Card>
                     <CardHeader>
                         <CardTitle>Device Secret</CardTitle>
-                        <CardDescription>
-                            Authentication secret for this device
-                        </CardDescription>
+                        <CardDescription> Authentication secret for this device </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-3">
-                            <p class="text-sm text-muted-foreground">
-                                This secret is used for device authentication and monitoring integration.
-                            </p>
+                            <p class="text-sm text-muted-foreground">This secret is used for device authentication and monitoring integration.</p>
                             <div class="flex items-center space-x-2">
-                                <code class="flex-1 text-xs bg-muted p-3 rounded font-mono break-all">
+                                <code class="flex-1 rounded bg-muted p-3 font-mono text-xs break-all">
                                     {{ device.secret }}
                                 </code>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    @click="copySecret(device.secret)"
-                                >
+                                <Button variant="outline" size="sm" @click="copySecret(device.secret)">
                                     <Copy class="h-4 w-4" />
                                 </Button>
                             </div>
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-muted-foreground">Webhook URL</label>
                                 <div class="flex items-center space-x-2">
-                                    <code class="flex-1 text-xs bg-muted p-3 rounded font-mono break-all">
+                                    <code class="flex-1 rounded bg-muted p-3 font-mono text-xs break-all">
                                         {{ webhookUrl(device.secret) }}
                                     </code>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        @click="copyWebhook(device.secret)"
-                                    >
+                                    <Button variant="outline" size="sm" @click="copyWebhook(device.secret)">
                                         <LinkIcon class="h-4 w-4" />
                                     </Button>
                                 </div>
@@ -332,7 +321,10 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                                 <div class="grid gap-3 md:grid-cols-2">
                                     <div class="space-y-1">
                                         <label class="text-xs text-muted-foreground">Severity</label>
-                                        <select v-model="payload.severity" class="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                                        <select
+                                            v-model="payload.severity"
+                                            class="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                        >
                                             <option value="low">Low</option>
                                             <option value="medium">Medium</option>
                                             <option value="high">High</option>
@@ -341,7 +333,10 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                                     </div>
                                     <div class="space-y-1">
                                         <label class="text-xs text-muted-foreground">Device Status</label>
-                                        <select v-model="payload.device_status" class="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                                        <select
+                                            v-model="payload.device_status"
+                                            class="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                        >
                                             <option value="online">Online</option>
                                             <option value="offline">Offline</option>
                                             <option value="warning">Warning</option>
@@ -350,21 +345,24 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                                     </div>
                                     <div class="space-y-1 md:col-span-2">
                                         <label class="text-xs text-muted-foreground">Title</label>
-                                        <input v-model="payload.title" type="text" class="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                                        <input
+                                            v-model="payload.title"
+                                            type="text"
+                                            class="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                        />
                                     </div>
                                     <div class="space-y-1 md:col-span-2">
                                         <label class="text-xs text-muted-foreground">Description</label>
-                                        <textarea v-model="payload.description" rows="3" class="w-full rounded-md border border-input bg-background px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"></textarea>
+                                        <textarea
+                                            v-model="payload.description"
+                                            rows="3"
+                                            class="w-full rounded-md border border-input bg-background px-2 py-2 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                        ></textarea>
                                     </div>
                                 </div>
                                 <div class="flex items-start space-x-2">
-                                    <pre class="flex-1 text-xs bg-muted p-3 rounded font-mono overflow-auto"><code>{{ exampleJson }}</code></pre>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        @click="copyExamplePayload"
-                                        title="Copy Example JSON"
-                                    >
+                                    <pre class="flex-1 overflow-auto rounded bg-muted p-3 font-mono text-xs"><code>{{ exampleJson }}</code></pre>
+                                    <Button variant="outline" size="sm" @click="copyExamplePayload" title="Copy Example JSON">
                                         <Copy class="h-4 w-4" />
                                     </Button>
                                 </div>
@@ -381,32 +379,23 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                     <div class="flex items-center justify-between">
                         <div>
                             <CardTitle>Recent Incidents</CardTitle>
-                            <CardDescription>
-                                Latest incidents for this device
-                            </CardDescription>
+                            <CardDescription> Latest incidents for this device </CardDescription>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <Badge variant="destructive" v-if="openIncidents.length > 0">
-                                {{ openIncidents.length }} open
-                            </Badge>
-                            <Link href="/incidents" class="text-sm text-blue-600 hover:text-blue-800">
-                                View all incidents
-                            </Link>
+                            <Badge variant="destructive" v-if="openIncidents.length > 0"> {{ openIncidents.length }} open </Badge>
+                            <Link href="/incidents" class="text-sm text-blue-600 hover:text-blue-800"> View all incidents </Link>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div v-if="recentIncidents.length === 0" class="text-center py-8">
+                    <div v-if="recentIncidents.length === 0" class="py-8 text-center">
                         <Activity class="mx-auto h-12 w-12 text-muted-foreground" />
                         <h3 class="mt-4 text-lg font-medium">No incidents</h3>
-                        <p class="mt-2 text-muted-foreground">
-                            This device has no recorded incidents.
-                        </p>
+                        <p class="mt-2 text-muted-foreground">This device has no recorded incidents.</p>
                     </div>
 
                     <div v-else class="space-y-4">
-                        <div v-for="incident in recentIncidents" :key="incident.id"
-                             class="flex items-center justify-between p-4 border rounded-lg">
+                        <div v-for="incident in recentIncidents" :key="incident.id" class="flex items-center justify-between rounded-lg border p-4">
                             <div class="flex-1">
                                 <h3 class="font-medium">{{ incident.title }}</h3>
                                 <p class="text-sm text-muted-foreground">
@@ -418,8 +407,9 @@ const recentIncidents = props.device.incidents.slice(0, 5);
                                     {{ incident.severity }}
                                 </Badge>
                                 <Badge
-                                    :variant="incident.status === 'resolved' ? 'default' :
-                                            incident.status === 'acknowledged' ? 'secondary' : 'destructive'"
+                                    :variant="
+                                        incident.status === 'resolved' ? 'default' : incident.status === 'acknowledged' ? 'secondary' : 'destructive'
+                                    "
                                     class="capitalize"
                                 >
                                     {{ incident.status }}

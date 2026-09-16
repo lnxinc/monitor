@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Activity, AlertTriangle, CheckCircle, Eye, Filter, Clock, Check, Plus, X } from 'lucide-vue-next';
-import { ref, watch, computed, reactive } from 'vue';
+import { Activity, AlertTriangle, Check, CheckCircle, Clock, Eye, Filter, Plus, X } from 'lucide-vue-next';
+import { computed, reactive, ref, watch } from 'vue';
 
 interface Props {
     incidents: {
@@ -135,9 +135,13 @@ const formatDateTime = (dateString: string) => {
 };
 
 const acknowledgeIncident = (incidentId: number) => {
-    router.patch(`/incidents/${incidentId}/acknowledge`, {}, {
-        preserveScroll: true,
-    });
+    router.patch(
+        `/incidents/${incidentId}/acknowledge`,
+        {},
+        {
+            preserveScroll: true,
+        },
+    );
 };
 
 const resolveIncident = (incidentId: number) => {
@@ -149,21 +153,23 @@ const resolveIncident = (incidentId: number) => {
     router.patch(`/incidents/${incidentId}/resolve`, data, { preserveScroll: true });
 };
 
-watch(currentFilters, (newFilters) => {
-    const params = new URLSearchParams();
-    if (newFilters.status) params.set('status', newFilters.status);
-    if (newFilters.severity) params.set('severity', newFilters.severity);
+watch(
+    currentFilters,
+    (newFilters) => {
+        const params = new URLSearchParams();
+        if (newFilters.status) params.set('status', newFilters.status);
+        if (newFilters.severity) params.set('severity', newFilters.severity);
 
-    const url = params.toString() ? `/incidents?${params.toString()}` : '/incidents';
-    router.get(url, {}, { preserveState: true, replace: true });
-}, { deep: true });
+        const url = params.toString() ? `/incidents?${params.toString()}` : '/incidents';
+        router.get(url, {}, { preserveState: true, replace: true });
+    },
+    { deep: true },
+);
 
 // Support both Laravel paginator shapes: API Resources (meta.last_page)
 // and plain paginator (last_page on the root object)
 const lastPage = computed(() => {
-    // @ts-ignore - runtime may differ
     const metaLast = (props.incidents as any)?.meta?.last_page;
-    // @ts-ignore - runtime may differ
     const rootLast = (props.incidents as any)?.last_page;
     return metaLast ?? rootLast ?? 1;
 });
@@ -177,13 +183,11 @@ const lastPage = computed(() => {
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Incidents</h1>
-                    <p class="text-muted-foreground">
-                        Monitor and manage device incidents
-                    </p>
+                    <p class="text-muted-foreground">Monitor and manage device incidents</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <Button @click="showCreate = !showCreate" variant="default">
-                        <Plus class="h-4 w-4 mr-2" />
+                        <Plus class="mr-2 h-4 w-4" />
                         Add Incident
                     </Button>
                 </div>
@@ -201,26 +205,33 @@ const lastPage = computed(() => {
                     <form class="grid gap-4 md:grid-cols-2" @submit.prevent="submit">
                         <div class="space-y-2 md:col-span-2">
                             <label class="text-sm font-medium">Device</label>
-                            <select v-model="form.device_id"
+                            <select
+                                v-model="form.device_id"
                                 required
-                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            >
                                 <option value="" disabled>Select a device</option>
-                                <option v-for="d in props.devices" :key="d.id" :value="d.id">
-                                    {{ d.organization.name }} — {{ d.name }}
-                                </option>
+                                <option v-for="d in props.devices" :key="d.id" :value="d.id">{{ d.organization.name }} — {{ d.name }}</option>
                             </select>
                         </div>
 
                         <div class="space-y-2">
                             <label class="text-sm font-medium">Title</label>
-                            <input v-model="form.title" required type="text"
-                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+                            <input
+                                v-model="form.title"
+                                required
+                                type="text"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            />
                         </div>
 
                         <div class="space-y-2">
                             <label class="text-sm font-medium">Severity</label>
-                            <select v-model="form.severity" required
-                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            <select
+                                v-model="form.severity"
+                                required
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            >
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
                                 <option value="high">High</option>
@@ -230,14 +241,20 @@ const lastPage = computed(() => {
 
                         <div class="space-y-2 md:col-span-2">
                             <label class="text-sm font-medium">Description</label>
-                            <textarea v-model="form.description" rows="3"
-                                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"></textarea>
+                            <textarea
+                                v-model="form.description"
+                                rows="3"
+                                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            ></textarea>
                         </div>
 
                         <div class="space-y-2">
                             <label class="text-sm font-medium">Device Status</label>
-                            <select v-model="form.device_status" required
-                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            <select
+                                v-model="form.device_status"
+                                required
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            >
                                 <option value="online">Online</option>
                                 <option value="offline">Offline</option>
                                 <option value="warning">Warning</option>
@@ -247,12 +264,15 @@ const lastPage = computed(() => {
 
                         <div class="space-y-2">
                             <label class="text-sm font-medium">Occurred At</label>
-                            <input v-model="form.occurred_at" type="datetime-local"
-                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+                            <input
+                                v-model="form.occurred_at"
+                                type="datetime-local"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            />
                             <p class="text-xs text-muted-foreground">Leave blank to use current time.</p>
                         </div>
 
-                        <div class="md:col-span-2 flex gap-2 justify-end">
+                        <div class="flex justify-end gap-2 md:col-span-2">
                             <Button type="button" variant="outline" @click="resetForm">Reset</Button>
                             <Button type="submit">Create Incident</Button>
                         </div>
@@ -264,7 +284,7 @@ const lastPage = computed(() => {
             <Card>
                 <CardHeader>
                     <CardTitle class="flex items-center">
-                        <Filter class="h-4 w-4 mr-2" />
+                        <Filter class="mr-2 h-4 w-4" />
                         Filters
                     </CardTitle>
                 </CardHeader>
@@ -274,7 +294,7 @@ const lastPage = computed(() => {
                             <label class="text-sm font-medium">Status</label>
                             <select
                                 v-model="currentFilters.status"
-                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                             >
                                 <option value="">All statuses</option>
                                 <option value="open">Open</option>
@@ -287,7 +307,7 @@ const lastPage = computed(() => {
                             <label class="text-sm font-medium">Severity</label>
                             <select
                                 v-model="currentFilters.severity"
-                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                             >
                                 <option value="">All severities</option>
                                 <option value="low">Low</option>
@@ -301,42 +321,44 @@ const lastPage = computed(() => {
             </Card>
 
             <!-- Incidents List -->
-            <div v-if="props.incidents.data.length === 0" class="text-center py-12">
+            <div v-if="props.incidents.data.length === 0" class="py-12 text-center">
                 <Activity class="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 class="mt-4 text-lg font-medium">No incidents found</h3>
-                <p class="mt-2 text-muted-foreground">
-                    No incidents match your current filters.
-                </p>
+                <p class="mt-2 text-muted-foreground">No incidents match your current filters.</p>
             </div>
 
             <div v-else class="space-y-4">
                 <Card v-for="incident in props.incidents.data" :key="incident.id">
                     <CardContent class="p-6">
                         <div class="flex items-start justify-between space-x-4">
-                            <div class="flex items-start space-x-4 flex-1">
-                                <component :is="getStatusIcon(incident.status)"
-                                          :class="['h-5 w-5 mt-0.5', getStatusColor(incident.status)]" />
+                            <div class="flex flex-1 items-start space-x-4">
+                                <component :is="getStatusIcon(incident.status)" :class="['mt-0.5 h-5 w-5', getStatusColor(incident.status)]" />
 
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center space-x-3 mb-2">
-                                        <h3 class="font-semibold text-lg">{{ incident.title }}</h3>
+                                <div class="min-w-0 flex-1">
+                                    <div class="mb-2 flex items-center space-x-3">
+                                        <h3 class="text-lg font-semibold">{{ incident.title }}</h3>
                                         <Badge :class="getSeverityColor(incident.severity)" class="capitalize">
                                             {{ incident.severity }}
                                         </Badge>
                                         <Badge
-                                            :variant="incident.status === 'resolved' ? 'default' :
-                                                    incident.status === 'acknowledged' ? 'secondary' : 'destructive'"
+                                            :variant="
+                                                incident.status === 'resolved'
+                                                    ? 'default'
+                                                    : incident.status === 'acknowledged'
+                                                      ? 'secondary'
+                                                      : 'destructive'
+                                            "
                                             class="capitalize"
                                         >
                                             {{ incident.status }}
                                         </Badge>
                                     </div>
 
-                                    <p v-if="incident.description" class="text-muted-foreground mb-3">
+                                    <p v-if="incident.description" class="mb-3 text-muted-foreground">
                                         {{ incident.description }}
                                     </p>
 
-                                    <div class="text-sm text-muted-foreground space-y-1">
+                                    <div class="space-y-1 text-sm text-muted-foreground">
                                         <div>
                                             <span class="font-medium">Device:</span>
                                             {{ incident.device.organization.name }} - {{ incident.device.name }}
@@ -364,23 +386,13 @@ const lastPage = computed(() => {
                                     </Button>
                                 </Link>
 
-                                <Button
-                                    v-if="incident.status === 'open'"
-                                    variant="outline"
-                                    size="sm"
-                                    @click="acknowledgeIncident(incident.id)"
-                                >
-                                    <Clock class="h-4 w-4 mr-2" />
+                                <Button v-if="incident.status === 'open'" variant="outline" size="sm" @click="acknowledgeIncident(incident.id)">
+                                    <Clock class="mr-2 h-4 w-4" />
                                     Acknowledge
                                 </Button>
 
-                                <Button
-                                    v-if="incident.status !== 'resolved'"
-                                    variant="outline"
-                                    size="sm"
-                                    @click="resolveIncident(incident.id)"
-                                >
-                                    <Check class="h-4 w-4 mr-2" />
+                                <Button v-if="incident.status !== 'resolved'" variant="outline" size="sm" @click="resolveIncident(incident.id)">
+                                    <Check class="mr-2 h-4 w-4" />
                                     Resolve
                                 </Button>
                             </div>
@@ -398,12 +410,12 @@ const lastPage = computed(() => {
                         :is="link.url ? Link : 'span'"
                         :href="link.url || undefined"
                         :class="[
-                            'px-3 py-2 text-sm rounded-md border',
+                            'rounded-md border px-3 py-2 text-sm',
                             link.active
-                                ? 'bg-primary text-primary-foreground border-primary'
+                                ? 'border-primary bg-primary text-primary-foreground'
                                 : link.url
-                                    ? 'bg-background border-input hover:bg-accent hover:text-accent-foreground'
-                                    : 'bg-muted text-muted-foreground border-input cursor-not-allowed'
+                                  ? 'border-input bg-background hover:bg-accent hover:text-accent-foreground'
+                                  : 'cursor-not-allowed border-input bg-muted text-muted-foreground',
                         ]"
                     >
                         <span v-html="link.label" />
