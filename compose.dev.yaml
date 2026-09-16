@@ -1,0 +1,25 @@
+# Build the LNX-360 image from this checkout instead of pulling it from GHCR.
+#
+#   docker compose -f compose.yaml -f compose.dev.yaml up -d --build
+#
+# Everything else (MySQL, Redis, volumes, environment defaults) comes from
+# compose.yaml. Override APP_ENV / APP_DEBUG in .env if you want debug output.
+
+services:
+  app:
+    image: lnx360:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  queue:
+    image: lnx360:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  scheduler:
+    image: lnx360:local
+    build:
+      context: .
+      dockerfile: Dockerfile

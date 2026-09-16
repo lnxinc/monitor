@@ -1,0 +1,148 @@
+# LNX-360 -- production stack.
+#
+#   docker compose up -d
+#
+# Pulls ghcr.io/lnxinc/monitor and starts the web app, a queue worker, the
+# scheduler, MySQL and Redis. Every setting has a working default; override any of
+# them in a `.env` file next to this compose file (see .env.docker.example).
+#
+# To build the image from source instead of pulling it, add compose.dev.yaml:
+#
+#   docker compose -f compose.yaml -f compose.dev.yaml up -d --build
+
+name: lnx360
+
+x-app-environment: &app-environment
+  APP_NAME: ${APP_NAME:-LNX-360}
+  APP_ENV: ${APP_ENV:-production}
+  APP_DEBUG: ${APP_DEBUG:-false}
+  APP_URL: ${APP_URL:-http://localhost:8080}
+  APP_KEY: ${APP_KEY:-}
+  LOG_CHANNEL: stderr
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+
+  DB_CONNECTION: mysql
+  DB_HOST: mysql
+  DB_PORT: 3306
+  DB_DATABASE: ${DB_DATABASE:-lnx360}
+  DB_USERNAME: ${DB_USERNAME:-lnx360}
+  DB_PASSWORD: ${DB_PASSWORD:-lnx360}
+
+  REDIS_CLIENT: phpredis
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  CACHE_STORE: redis
+  SESSION_DRIVER: redis
+  QUEUE_CONNECTION: redis
+
+  MAIL_MAILER: ${MAIL_MAILER:-log}
+  MAIL_SCHEME: ${MAIL_SCHEME:-}
+  MAIL_HOST: ${MAIL_HOST:-127.0.0.1}
+  MAIL_PORT: ${MAIL_PORT:-2525}
+  MAIL_USERNAME: ${MAIL_USERNAME:-}
+  MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+  MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-lnx360@lnxinc.com}
+  MAIL_FROM_NAME: ${MAIL_FROM_NAME:-LNX-360}
+
+  UNIFI_SITE_MANAGER_BASE_URL: ${UNIFI_SITE_MANAGER_BASE_URL:-https://api.ui.com/v1}
+  UNIFI_SITE_MANAGER_API_KEY: ${UNIFI_SITE_MANAGER_API_KEY:-}
+
+  HEARTBEAT_MAX_ATTEMPTS: ${HEARTBEAT_MAX_ATTEMPTS:-3}
+  HEARTBEAT_INITIAL_BACKOFF_MS: ${HEARTBEAT_INITIAL_BACKOFF_MS:-200}
+  HEARTBEAT_BACKOFF_MULTIPLIER: ${HEARTBEAT_BACKOFF_MULTIPLIER:-2.0}
+  ALERT_DEDUPE_TTL_SECONDS: ${ALERT_DEDUPE_TTL_SECONDS:-300}
+  ALERT_FLOOD_LIMIT: ${ALERT_FLOOD_LIMIT:-10}
+  ALERT_FLOOD_WINDOW_SECONDS: ${ALERT_FLOOD_WINDOW_SECONDS:-60}
+
+  PHP_OPCACHE_ENABLE: "1"
+  PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT:-256M}
+
+x-app: &app
+  image: ghcr.io/lnxinc/monitor:${LNX360_VERSION:-latest}
+  restart: unless-stopped
+  volumes:
+    - storage:/var/www/html/storage
+  depends_on:
+    mysql:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  app:
+    <<: *app
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      <<: *app-environment
+      AUTORUN_ENABLED: "true"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/up"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+
+  queue:
+    <<: *app
+    command: ["php", "/var/www/html/artisan", "queue:work", "--tries=3", "--sleep=1", "--max-time=3600"]
+    stop_signal: SIGTERM
+    environment:
+      <<: *app-environment
+      AUTORUN_ENABLED: "false"
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "healthcheck-queue"]
+      interval: 30s
+      start_period: 10s
+
+  scheduler:
+    <<: *app
+    command: ["php", "/var/www/html/artisan", "schedule:work"]
+    stop_signal: SIGTERM
+    environment:
+      <<: *app-environment
+      AUTORUN_ENABLED: "false"
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "healthcheck-schedule"]
+      interval: 30s
+      start_period: 10s
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-lnx360}
+      MYSQL_USER: ${DB_USERNAME:-lnx360}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-lnx360}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-lnx360-root}
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  storage:
+  mysql:
+  redis:

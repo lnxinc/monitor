@@ -1,0 +1,62 @@
+# VCS and editor state
+.git
+.gitattributes
+.github
+.idea
+.vscode
+.fleet
+.nova
+.zed
+.cursor
+.junie
+.gemini
+.claude
+.mcp.json
+boost.json
+opencode.json
+
+# Local secrets and environment
+.env
+.env.*
+!.env.example
+auth.json
+
+# Dependencies and build output (rebuilt inside the image)
+node_modules
+vendor
+public/build
+public/hot
+public/storage
+bootstrap/ssr
+bootstrap/cache/*.php
+resources/js/actions
+resources/js/routes
+resources/js/wayfinder
+
+# Runtime state
+storage/*.key
+storage/logs/*
+!storage/logs/.gitignore
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*.php
+storage/framework/testing/*
+storage/app/private/*
+!storage/app/private/.gitignore
+storage/app/public/*
+!storage/app/public/.gitignore
+storage/pail
+.phpunit.cache
+.phpunit.result.cache
+
+# Not needed at runtime
+tests
+docs
+*.md
+!README.md
+Dockerfile
+compose*.yaml
+docker-compose*.yml
+
+# Local SQLite databases
+database/*.sqlite*
