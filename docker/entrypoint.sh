@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# LNX-360 container entrypoint.
+# LNX Monitor container entrypoint.
 #
 # Guarantees an APP_KEY exists, then hands off to the serversideup/php entrypoint
 # (which runs the Laravel automations and starts NGINX + PHP-FPM, or the custom
@@ -24,7 +24,7 @@ if [ -z "${APP_KEY:-}" ]; then
                 php "$APP_ROOT/artisan" key:generate --show --no-ansi --no-interaction | tr -d '[:space:]' > "$KEY_FILE.tmp"
                 chmod 600 "$KEY_FILE.tmp"
                 mv "$KEY_FILE.tmp" "$KEY_FILE"
-                echo "lnx360: generated APP_KEY and stored it in $KEY_FILE"
+                echo "lnx-monitor: generated APP_KEY and stored it in $KEY_FILE"
             fi
         ) 9>"$KEY_FILE.lock"
     fi

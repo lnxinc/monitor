@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# LNX-360 production image.
+# LNX Monitor production image.
 #
 #   docker build -t ghcr.io/lnxinc/monitor:local .
 #
@@ -51,12 +51,12 @@ RUN composer dump-autoload --no-dev --optimize --no-interaction \
 # ---------------------------------------------------------------------------
 FROM serversideup/php:${PHP_VERSION}-fpm-nginx AS runtime
 
-LABEL org.opencontainers.image.title="LNX-360" \
+LABEL org.opencontainers.image.title="LNX Monitor" \
       org.opencontainers.image.description="Network operations and monitoring platform by LNX Inc." \
       org.opencontainers.image.vendor="LNX Inc." \
       org.opencontainers.image.url="https://lnxinc.com" \
       org.opencontainers.image.source="https://github.com/lnxinc/monitor" \
-      org.opencontainers.image.licenses="LicenseRef-LNX-360-Source-Available"
+      org.opencontainers.image.licenses="LicenseRef-LNX-Monitor-Source-Available"
 
 USER root
 

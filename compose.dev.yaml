@@ -1,4 +1,4 @@
-# Build the LNX-360 image from this checkout instead of pulling it from GHCR.
+# Build the LNX Monitor image from this checkout instead of pulling it from GHCR.
 #
 #   docker compose -f compose.yaml -f compose.dev.yaml up -d --build
 #
@@ -7,19 +7,19 @@
 
 services:
   app:
-    image: lnx360:local
+    image: lnx-monitor:local
     build:
       context: .
       dockerfile: Dockerfile
 
   queue:
-    image: lnx360:local
+    image: lnx-monitor:local
     build:
       context: .
       dockerfile: Dockerfile
 
   scheduler:
-    image: lnx360:local
+    image: lnx-monitor:local
     build:
       context: .
       dockerfile: Dockerfile

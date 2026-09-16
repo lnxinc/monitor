@@ -16,8 +16,5 @@
         "phpstorm",
         "vscode"
     ],
-    "guidelines": [
-        "inertiajs/inertia-laravel",
-        "laravel/fortify"
-    ]
+    "guidelines": true
 }

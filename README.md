@@ -2,7 +2,7 @@
   <img src="public/brand/readme-banner.png" alt="LNX Inc." width="100%">
 </p>
 
-# LNX-360
+# LNX Monitor
 
 **UniFi Site Manager and network monitoring for managed service providers.**
 
@@ -11,9 +11,9 @@
 [![Image](https://img.shields.io/badge/ghcr.io-lnxinc%2Fmonitor-112540)](https://github.com/lnxinc/monitor/pkgs/container/monitor)
 [![License](https://img.shields.io/badge/license-LNX--360%20Source%20Available-43BDE9)](LICENSE)
 
-LNX-360 is the network operations and monitoring platform built by [LNX Inc.](https://lnxinc.com) for managed service providers. It syncs sites and devices from UniFi Site Manager, raises incidents when a site goes offline or degrades, and tracks infrastructure health across servers, websites, SSL certificates and third-party telemetry delivered by webhook. Checks run on a schedule through dedicated drivers (HTTP, ICMP ping, TCP port, SSL certificate, SIP) with alert routing, maintenance windows and public status pages built in.
+LNX Monitor is the network operations and monitoring platform built by [LNX Inc.](https://lnxinc.com) for managed service providers. It syncs sites and devices from UniFi Site Manager, raises incidents when a site goes offline or degrades, and tracks infrastructure health across servers, websites, SSL certificates and third-party telemetry delivered by webhook. Checks run on a schedule through dedicated drivers (HTTP, ICMP ping, TCP port, SSL certificate, SIP) with alert routing, maintenance windows and public status pages built in.
 
-Built with Laravel 12, Inertia 2 and Vue 3.
+Built with Laravel 13, Inertia 2 and Vue 3.
 
 ## What it does
 
@@ -30,7 +30,7 @@ Built with Laravel 12, Inertia 2 and Vue 3.
 The published image contains the app, compiled front-end assets and every PHP extension it needs. The compose file adds MySQL and Redis and runs the web server, a queue worker and the scheduler from that one image. Nothing has to be built or configured on the host.
 
 ```bash
-mkdir lnx360 && cd lnx360
+mkdir lnx-monitor && cd lnx-monitor
 curl -fsSLO https://raw.githubusercontent.com/lnxinc/monitor/master/compose.yaml
 docker compose up -d
 ```
@@ -57,12 +57,12 @@ Every setting has a working default. To change one, create a `.env` file next to
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `LNX360_VERSION` | `latest` | Image tag to run. Pin a release such as `1.2.0` in production. |
+| `MONITOR_VERSION` | `latest` | Image tag to run. Pin a release such as `1.2.0` in production. |
 | `APP_PORT` | `8080` | Host port the UI is published on. |
 | `APP_URL` | `http://localhost:8080` | Public URL, used in emails and generated links. |
 | `APP_KEY` | generated | Set to reuse an existing key. Leave blank to auto-generate once. |
-| `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD` | `lnx360` | MySQL credentials. Change them before exposing the stack. |
-| `DB_ROOT_PASSWORD` | `lnx360-root` | MySQL root password. |
+| `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD` | `monitor` | MySQL credentials. Change them before exposing the stack. |
+| `DB_ROOT_PASSWORD` | `monitor-root` | MySQL root password. |
 | `MAIL_*` | `log` mailer | SMTP settings for outbound alerts. |
 | `UNIFI_SITE_MANAGER_API_KEY` | empty | Enables the UniFi Site Manager sync. |
 | `HEARTBEAT_*`, `ALERT_*` | see below | Reliability tuning. |
@@ -76,7 +76,7 @@ docker compose pull && docker compose up -d      # update to the newest image
 docker compose logs -f app queue scheduler        # follow application logs
 docker compose exec app php artisan monitors:run  # run every due monitor now
 docker compose exec app php artisan tinker        # poke at the app
-docker compose exec mysql mysqldump -ulnx360 -plnx360 lnx360 > backup.sql
+docker compose exec mysql mysqldump -umonitor -pmonitor monitor > backup.sql
 ```
 
 Three volumes hold all state: `storage` (application key, uploads, logs), `mysql` and `redis`. Back those up and the stack can be recreated anywhere with the same compose file.
@@ -88,7 +88,7 @@ git clone https://github.com/lnxinc/monitor.git && cd monitor
 docker compose -f compose.yaml -f compose.dev.yaml up -d --build
 ```
 
-Or build the image on its own with `docker build -t lnx360:local .`. The [Dockerfile](Dockerfile) is a two-stage build: stage one installs Composer and npm dependencies and compiles the Vite bundle, stage two copies the result into an unprivileged PHP-FPM + NGINX runtime. Pushes to `master` and `v*` tags publish multi-architecture images (amd64 and arm64) to GHCR through the [docker workflow](.github/workflows/docker-publish.yml).
+Or build the image on its own with `docker build -t lnx-monitor:local .`. The [Dockerfile](Dockerfile) is a two-stage build: stage one installs Composer and npm dependencies and compiles the Vite bundle, stage two copies the result into an unprivileged PHP-FPM + NGINX runtime. Pushes to `master` and `v*` tags publish multi-architecture images (amd64 and arm64) to GHCR through the [docker workflow](.github/workflows/docker-publish.yml).
 
 ## Running without Docker
 
@@ -166,7 +166,7 @@ CI runs the Pest suite, Pint and the front-end linters on every push and pull re
 
 ## Brand
 
-LNX-360 is an LNX Inc. product. Anything this project puts in front of a client (status pages, emails, exported reports, documentation) follows the LNX brand standard v1.0. The files live in [`public/brand/`](public/brand).
+LNX Monitor is an LNX Inc. product. Anything this project puts in front of a client (status pages, emails, exported reports, documentation) follows the LNX brand standard v1.0. The files live in [`public/brand/`](public/brand).
 
 ### Logo
 
@@ -229,6 +229,6 @@ The product UI itself follows its own design-token set in `resources/css/app.css
 
 ## License
 
-LNX-360 is released under the [LNX-360 Source Available License](LICENSE).
+LNX Monitor is released under the [LNX Monitor Source Available License](LICENSE).
 
 You are free to use, modify and deploy this software as long as you keep attribution to LNX Inc. Reselling or commercially redistributing the software as a product or SaaS offering requires prior written permission. Contact **sari@lnxinc.com** for commercial redistribution licensing.
