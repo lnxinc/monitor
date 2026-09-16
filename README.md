@@ -4,12 +4,14 @@
 
 # LNX-360
 
+**UniFi Site Manager and network monitoring for managed service providers.**
+
 [![CI](https://github.com/lnxinc/monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/lnxinc/monitor/actions/workflows/ci.yml)
 [![Docker](https://github.com/lnxinc/monitor/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/lnxinc/monitor/actions/workflows/docker-publish.yml)
 [![Image](https://img.shields.io/badge/ghcr.io-lnxinc%2Fmonitor-112540)](https://github.com/lnxinc/monitor/pkgs/container/monitor)
 [![License](https://img.shields.io/badge/license-LNX--360%20Source%20Available-43BDE9)](LICENSE)
 
-LNX-360 is the network operations and monitoring platform built by [LNX Inc.](https://lnxinc.com) for managed service providers. It tracks infrastructure health across devices, servers, websites, SSL certificates and third-party telemetry delivered by webhook. Checks run on a schedule through dedicated drivers (HTTP, ICMP ping, TCP port, SSL certificate, SIP) with alert routing, maintenance windows and public status pages built in.
+LNX-360 is the network operations and monitoring platform built by [LNX Inc.](https://lnxinc.com) for managed service providers. It syncs sites and devices from UniFi Site Manager, raises incidents when a site goes offline or degrades, and tracks infrastructure health across servers, websites, SSL certificates and third-party telemetry delivered by webhook. Checks run on a schedule through dedicated drivers (HTTP, ICMP ping, TCP port, SSL certificate, SIP) with alert routing, maintenance windows and public status pages built in.
 
 Built with Laravel 12, Inertia 2 and Vue 3.
 
