@@ -164,69 +164,6 @@ npm run lint && npm run format:check
 
 CI runs the Pest suite, Pint and the front-end linters on every push and pull request.
 
-## Brand
-
-LNX Monitor is an LNX Inc. product. Anything this project puts in front of a client (status pages, emails, exported reports, documentation) follows the LNX brand standard v1.0. The files live in [`public/brand/`](public/brand).
-
-### Logo
-
-| File | Use |
-|---|---|
-| `lnx-logo-primary.png` | Primary lockup, light backgrounds |
-| `lnx-logo-reversed-white.png` | White lockup, transparent. LNX Navy and Deep Navy backgrounds only. |
-| `lnx-logo-mono-navy.png` | One colour, single-ink print |
-| `lnx-mark-gradient.png` | Mark alone, for avatars, favicons and badges |
-| `lnx-gradient-rule.png` | The gradient rule as an image, for engines that cannot render CSS gradients |
-
-<p>
-  <img src="public/brand/lnx-logo-primary-320.png" alt="LNX Inc. primary lockup" width="320">
-</p>
-
-Lockups are 2000 × 646, a 3.096:1 ratio. If the width divided by the height is not 3.096, it has been stretched. Clear space on every side equals the height of the mark. Minimum width is 120 px on screen and 1 in in print.
-
-Never recolour, stretch, rotate, outline or shadow the logo, never place it on a busy photo, and never put the reversed mark on anything but Navy or Deep Navy. Use the supplied files; do not rebuild the mark in CSS, SVG or type.
-
-### Colour
-
-Navy is the brand. Cyan and violet are accents for rules, keylines and a single highlighted figure, never large fills and never behind type. One accented element per page.
-
-| | Name | Hex | Role |
-|---|---|---|---|
-| ![](public/brand/swatches/lnx-navy.png) | LNX Navy | `#112540` | Primary ink, headings, logo |
-| ![](public/brand/swatches/deep-navy.png) | Deep Navy | `#002657` | Covers, slide and banner backgrounds |
-| ![](public/brand/swatches/signal-cyan.png) | Signal Cyan | `#43BDE9` | Accent, charts, rules |
-| ![](public/brand/swatches/circuit-violet.png) | Circuit Violet | `#6F52F1` | Accent, second data series |
-| ![](public/brand/swatches/core-magenta.png) | Core Magenta | `#B624FA` | Logo core only. Never in UI, charts or highlights. |
-| ![](public/brand/swatches/mist.png) | Mist | `#EFF3F8` | Fills |
-| ![](public/brand/swatches/line.png) | Line | `#D3DBE5` | Rules, borders |
-| ![](public/brand/swatches/slate.png) | Slate | `#5A6A80` | Secondary text, labels |
-| ![](public/brand/swatches/body.png) | Body | `#3D4C61` | Body copy |
-
-The gradient is `linear-gradient(90deg, #43BDE9 0%, #6F52F1 100%)`, cyan to violet, left to right. It belongs to the logo. Elsewhere it is allowed only as a rule, a keyline or a thin band at a page edge. Never behind text, never as a background, never reversed or angled.
-
-Text on colour is limited to four combinations: white on Navy, white on Deep Navy, Navy on Cyan, white on Violet. White on Cyan fails contrast and is never used.
-
-### Typography
-
-Two typefaces, nothing else.
-
-- **Space Grotesk** (weights 500 and 600) for headlines, section titles and numbers that should be noticed. Tracking −2% at 20 pt and above. Fallback: Arial Bold.
-- **IBM Plex Sans** (weights 400, 500, 600) for body copy, tables, captions and labels. Never below 9 pt in print. Fallback: Calibri, then Arial.
-- **IBM Plex Mono** for codes, part numbers, specs and identifiers.
-
-Headings are sentence case, never italic, one weight per level. Underline is for links only.
-
-### Company
-
-| | |
-|---|---|
-| Legal name | LNX Inc. (with the period) |
-| Headquarters | 1395 Wheaton Dr Suite 500, Troy, MI 48083 |
-| Phone | 833-569-5690 |
-| Website | [lnxinc.com](https://lnxinc.com) |
-
-The product UI itself follows its own design-token set in `resources/css/app.css`. The brand standard governs what the app sends out and how the project presents itself.
-
 ## License
 
 LNX Monitor is released under the [LNX Monitor Source Available License](LICENSE).
